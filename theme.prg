@@ -5,20 +5,44 @@ set path to home() + "FFC\" additive
 set procedure to color.prg additive
 set procedure to json.prg additive
 
-with createobject("Theme")
-		if .execute("Dracula")
-**		if .execute("Light (Visual Studio)")
-**		if .execute("Dark (Visual Studio)")
-**		if .execute("Github")
-**		if .execute("One Dark Pro")
-**		if .execute("Field Lights")
-**		if .execute("MacOS Classic")
-**		if .execute("MacOS Modern Dark")		
-**		if .execute("One Monokai")
-		.SetScreenColors()
-		SYS(3056)
-	endif 
-endwith 
+setTheme("Dark (Visual Studio)")
+*setTheme("Github")
+*seeAllThemes()
+return 
+
+
+procedure setTheme
+	lparameters cTheme
+	with createobject("Theme")
+		if .execute(cTheme)
+			.SetScreenColors()
+			SYS(3056)
+		endif 
+	endwith 
+endproc 
+
+procedure seeAllThemes 
+	with createobject("Theme")
+		dimension aOptions[9]
+		
+		aOptions[1] = "Dracula"
+		aOptions[2] = "Light (Visual Studio)"
+		aOptions[3] = "Dark (Visual Studio)"
+		aOptions[4] = "Github"
+		aOptions[5] = "One Dark Pro"
+		aOptions[6] = "Field Lights"
+		aOptions[7] = "MacOS Classic"
+		aOptions[8] = "MacOS Modern Dark"	
+		aOptions[9] = "One Monokai"
+		
+		for nVar = 1 to alen(aOptions) 
+			.execute(aOptions[nvar])
+			.SetScreenColors()
+			SYS(3056)
+			wait window aOptions[nvar]
+		endfor 
+	endwith 
+endproc 
 
 define class Theme as Custom
 	
@@ -62,7 +86,7 @@ define class Theme as Custom
 		endif 
 		
 		this.addInArray("EditorNormalColor", cColorToRegister)
-		this.addInArray("EditorOperatorColor", cColorToRegister)
+		this.addInArray("EditorOperatorColor", cColorToRegister)		
 		this.addInArray("EditorVariableColor", cColorToRegister)
 
 		oTokenColors = oJsonDecoded.get("tokenColors", .null.)
@@ -150,6 +174,13 @@ define class Theme as Custom
 				cFontStyle = oSettings.get("fontStyle", "")
 				cEntry = "EditorConstantColor"
 				cEntryStyle = "EditorConstantStyle"
+				
+			case cScope == "keyword.operator"
+				cForeGround = oSettings.get("foreground")
+				cFontStyle = oSettings.get("fontStyle", "")
+				cEntry = "EditorOperatorColor"
+				cEntryStyle = "EditorOperatorStyle"
+				
 		endcase	
 		
 		if !empty(cForeGround)
